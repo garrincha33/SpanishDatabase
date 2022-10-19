@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        //step 3 call home struct
+   
         Home()
     }
 }
@@ -19,10 +19,8 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
-//step 2 create a home struct and a top header
+
 struct Home: View {
-    //step 3 state var for the search bar txt
-    @State private var txt = ""
     var body: some View {
         VStack {
             
@@ -46,25 +44,31 @@ struct Home: View {
             }.padding()
             ScrollView(.vertical, showsIndicators: false) {
                 VStack {
-                    //Step 4 create search bar
-                    //MARK: SEARCH BAR---------------
-                    HStack(spacing: 15) {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundColor(.gray)
-                        
-                        TextField("Search Categories", text: $txt)
-                    }
-                    .padding(.vertical, 15)
-                    .padding(.horizontal)
-                    .background(Color.white)
-                    .clipShape(Capsule())
-                    
-                    //Step 5 categories section header
+                    //step 1 refactor code for searchbar into
+                    //a seperate component
+                    SearchBarView()
                     //MARK: CATEGORIES
-                    
-                    
-                    
-                    
+                    //step 2 create the categories section
+                    HStack {
+                        Text("Categories")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        Spacer(minLength: 0)
+                        Button {
+                            
+                        } label: {
+                            Text("View All")
+                        }
+                    }.foregroundColor(.black)
+                        .padding(.top, 30)
+                    //step 4 create a lazyvgrid to hold
+                    //the category card view
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 2), spacing: 20) {
+                        
+                        ForEach(categories) {category in
+                            CategoryCardView(category: category)
+                        }
+                    }
                 }
                 .padding()
             }
@@ -72,17 +76,39 @@ struct Home: View {
         .background(Color.black.opacity(0.05).ignoresSafeArea(.all, edges: .all))
     }
 }
-//step 1 create some dummy data, after importing assets
-struct Category: Identifiable {
-    var id = UUID().uuidString
-    var name: String
-    var catNumber: Int
-    var asset: String
+//step 3 create a card view for the categories
+struct CategoryCardView: View {
+    var category: Category
+    var body: some View {
+        //step 4 wrap in vastack
+        VStack {
+            VStack {
+                Image(category.asset)
+                    .resizable()
+                    .renderingMode(.original)
+                    .aspectRatio(contentMode: .fit)
+                    .padding(.top, 10)
+                    .padding(.leading, 10)
+                    .background(Color.gray.opacity(0.2))
+                
+                HStack {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text(category.name).fontWeight(.bold)
+                    }
+                    .foregroundColor(.black)
+                    Spacer(minLength: 0)
+                }.padding()
+            }
+            .background(Color.white)
+            .cornerRadius(15)
+            
+            Spacer(minLength: 0)
+        }
+        
+        
+    }
 }
 
-var categories = [
-        Category(name: "Animals", catNumber: 1, asset: "AnimalsResized"),
-        Category(name: "Weather", catNumber: 2, asset: "AnimalsResized"),
-        Category(name: "Sports", catNumber: 3, asset: "AnimalsResized"),
-        Category(name: "Professional", catNumber: 4, asset: "AnimalsResized"),
-]
+
+
+
